@@ -133,7 +133,7 @@ func startAPI() {
 		}
 
 		// Tenta pegar dispositivo existente ou cria novo
-		deviceStore, err := container.GetFirstDevice(context.Background()) 
+		deviceStore, err := container.GetDevice(types.JID{User: id, Server: types.DefaultUserServer})
 		if err != nil || deviceStore == nil {
 			deviceStore = container.NewDevice()
 		}
