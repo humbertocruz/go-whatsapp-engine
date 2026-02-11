@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 
@@ -25,8 +26,9 @@ import (
 
 // Configuração
 var (
-	WebhookURL = getEnv("WEBHOOK_URL", "http://localhost:3000/api/webhook/whatsapp")
-	EnginePort = getEnv("PORT", "3002")
+	WebhookURL    = getEnv("WEBHOOK_URL", "http://localhost:3000/api/webhook/whatsapp")
+	EnginePort    = getEnv("PORT", "3002")
+	AllowedSender = getEnv("ALLOWED_SENDER", "5561992178060") // Filtro para farmácia de teste
 )
 
 type WhatsAppInstance struct {
@@ -85,6 +87,15 @@ func registerHandler(inst *WhatsAppInstance) {
 		switch v := evt.(type) {
 		case *events.Message:
 			if !v.Info.IsFromMe {
+				sender := v.Info.Sender.User
+				// Filtro de Segurança: Se for a farmácia de teste, só responde ao Beto
+				// Nota: No banco o ID da farmácia teste é usado como ID da instância
+				// Vamos assumir que a farmácia@teste.com tem um ID fixo ou detectável
+				if inst.ID != "" && strings.Contains(inst.ID, "teste") && !strings.Contains(AllowedSender, sender) {
+					fmt.Printf("🚫 [%s] Mensagem de %s ignorada (Filtro de Teste)\n", inst.ID, sender)
+					return
+				}
+
 				fmt.Printf("📩 [%s] Mensagem de %s\n", inst.ID, v.Info.Sender.String())
 				forwardToWebhook(inst.ID, "message", v)
 			}
@@ -105,7 +116,6 @@ func startAPI() {
 	r := gin.Default()
 	r.Use(cors.Default())
 
-	// Listar instâncias e seus status/QRs
 	r.GET("/instances", func(c *gin.Context) {
 		instMutex.RLock()
 		defer instMutex.RUnlock()
@@ -121,7 +131,6 @@ func startAPI() {
 		c.JSON(200, response)
 	})
 
-	// Iniciar conexão para uma farmácia específica
 	r.POST("/instances/:id/connect", func(c *gin.Context) {
 		id := c.Param("id")
 		
@@ -132,7 +141,6 @@ func startAPI() {
 			return
 		}
 
-		// Tenta pegar dispositivo existente ou cria novo
 		deviceStore, err := container.GetDevice(types.JID{User: id, Server: types.DefaultUserServer})
 		if err != nil || deviceStore == nil {
 			deviceStore = container.NewDevice()
@@ -156,14 +164,12 @@ func startAPI() {
 			return
 		}
 
-		// Go routine para capturar o QR e atualizar a instância
 		go func() {
 			for evt := range qrChan {
 				if evt.Event == "code" {
 					instMutex.Lock()
 					inst.QR = evt.Code
 					instMutex.Unlock()
-					// Enviar QR via webhook pro Vercel atualizar via WebSocket/Polling
 					forwardToWebhook(inst.ID, "qr", map[string]string{"code": evt.Code})
 				}
 			}
@@ -172,7 +178,6 @@ func startAPI() {
 		c.JSON(200, gin.H{"message": "Iniciando...", "status": "CONNECTING"})
 	})
 
-	// Enviar mensagem (API que o Next.js vai chamar)
 	r.POST("/instances/:id/send", func(c *gin.Context) {
 		id := c.Param("id")
 		var req struct {
