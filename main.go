@@ -10,7 +10,6 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -134,7 +133,7 @@ func startAPI() {
 		}
 
 		// Tenta pegar dispositivo existente ou cria novo
-		deviceStore, err := container.GetFirstDevice() // Simplificado para o exemplo, idealmente seria por ID
+		deviceStore, err := container.GetFirstDevice() 
 		if err != nil || deviceStore == nil {
 			deviceStore = container.NewDevice()
 		}
@@ -164,7 +163,7 @@ func startAPI() {
 					instMutex.Lock()
 					inst.QR = evt.Code
 					instMutex.Unlock()
-					// Opcional: Enviar QR via webhook pro Vercel atualizar via WebSocket/Polling
+					// Enviar QR via webhook pro Vercel atualizar via WebSocket/Polling
 					forwardToWebhook(inst.ID, "qr", map[string]string{"code": evt.Code})
 				}
 			}
