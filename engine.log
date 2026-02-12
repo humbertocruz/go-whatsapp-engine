@@ -1,0 +1,16 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /instances                --> main.startAPI.func1 (4 handlers)
+[GIN-debug] POST   /instances/:id/connect    --> main.startAPI.func2 (4 handlers)
+[GIN-debug] POST   /instances/:id/send       --> main.startAPI.func3 (4 handlers)
+📡 Multi-Engine rodando na porta 3002
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3002
+[GIN] 2026/02/12 - 16:02:55 | 200 |  587.109791ms |             ::1 | POST     "/instances/56fe5aa2-2517-44a1-bff8-0ea4e693d63f/connect"
+[GIN] 2026/02/12 - 16:03:02 | 200 |      983.75µs |             ::1 | GET      "/instances"
+16:05:35.902[33m [Client-56fe5aa2-2517-44a1-bff8-0ea4e693d63f/Socket WARN] Error sending close to websocket: failed to close WebSocket: failed to read frame header: EOF[0m

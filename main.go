@@ -141,7 +141,7 @@ func startAPI() {
 			return
 		}
 
-		deviceStore, err := container.GetDevice(types.JID{User: id, Server: types.DefaultUserServer})
+		deviceStore, err := container.GetDevice(context.Background(), types.JID{User: id, Server: types.DefaultUserServer})
 		if err != nil || deviceStore == nil {
 			deviceStore = container.NewDevice()
 		}
