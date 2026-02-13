@@ -11,6 +11,12 @@
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :3002
-[GIN] 2026/02/12 - 16:02:55 | 200 |  587.109791ms |             ::1 | POST     "/instances/56fe5aa2-2517-44a1-bff8-0ea4e693d63f/connect"
-[GIN] 2026/02/12 - 16:03:02 | 200 |      983.75µs |             ::1 | GET      "/instances"
-16:05:35.902[33m [Client-56fe5aa2-2517-44a1-bff8-0ea4e693d63f/Socket WARN] Error sending close to websocket: failed to close WebSocket: failed to read frame header: EOF[0m
+[GIN] 2026/02/12 - 16:55:32 | 200 |     267.333µs |             ::1 | GET      "/instances"
+[GIN] 2026/02/12 - 22:21:42 | 200 |     271.042µs |             ::1 | GET      "/instances"
+[GIN] 2026/02/12 - 22:21:48 | 200 |  496.680375ms |             ::1 | POST     "/instances/test-instance/connect"
+❌ [test-instance] Erro Webhook: Post "http://localhost:3000/api/webhook/whatsapp": dial tcp [::1]:3000: connect: connection refused
+❌ [test-instance] Erro Webhook: Post "http://localhost:3000/api/webhook/whatsapp": dial tcp [::1]:3000: connect: connection refused
+❌ [test-instance] Erro Webhook: Post "http://localhost:3000/api/webhook/whatsapp": dial tcp [::1]:3000: connect: connection refused
+❌ [test-instance] Erro Webhook: Post "http://localhost:3000/api/webhook/whatsapp": dial tcp [::1]:3000: connect: connection refused
+❌ [test-instance] Erro Webhook: Post "http://localhost:3000/api/webhook/whatsapp": dial tcp [::1]:3000: connect: connection refused
+22:24:29.253[33m [Client-test-instance/Socket WARN] Error sending close to websocket: failed to close WebSocket: failed to read frame header: EOF[0m
