@@ -28,7 +28,7 @@ import (
 var (
 	WebhookURL    = getEnv("WEBHOOK_URL", "http://localhost:3000/api/webhook/whatsapp")
 	EnginePort    = getEnv("PORT", "3002")
-	AllowedSender = getEnv("ALLOWED_SENDER", "5561992178060") // Filtro para farmácia de teste
+	AllowedSender = getEnv("ALLOWED_SENDER", "556199836903,5561992178060") // Beto (Pessoal + Teste)
 )
 
 type WhatsAppInstance struct {
@@ -88,11 +88,9 @@ func registerHandler(inst *WhatsAppInstance) {
 		case *events.Message:
 			if !v.Info.IsFromMe {
 				sender := v.Info.Sender.User
-				// Filtro de Segurança: Se for a farmácia de teste, só responde ao Beto
-				// Nota: No banco o ID da farmácia teste é usado como ID da instância
-				// Vamos assumir que a farmácia@teste.com tem um ID fixo ou detectável
-				if inst.ID != "" && strings.Contains(inst.ID, "teste") && !strings.Contains(AllowedSender, sender) {
-					fmt.Printf("🚫 [%s] Mensagem de %s ignorada (Filtro de Teste)\n", inst.ID, sender)
+				// Filtro de Segurança: Em DEV/Teste, só responde ao Beto para evitar spam
+				if !strings.Contains(AllowedSender, sender) {
+					fmt.Printf("🚫 [%s] Mensagem de %s ignorada (Filtro de Segurança Ativo)\n", inst.ID, sender)
 					return
 				}
 
